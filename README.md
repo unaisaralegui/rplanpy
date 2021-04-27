@@ -1,7 +1,7 @@
 # rplanpy
 
 Set of python utilities to work with the RPLAN dataset from 
-[Data-driven Interior Plan Generation for Residential Buildings](https://doi.org/10.1145/3355089.3356556) paper.
+"[Data-driven Interior Plan Generation for Residential Buildings](https://doi.org/10.1145/3355089.3356556)" paper.
 
 
 ## Data
