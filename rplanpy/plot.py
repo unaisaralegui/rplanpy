@@ -42,12 +42,18 @@ def plot_floorplan(data: data.RplanData, ax=None, title=None):
 
 def plot_floorplan_graph(data: data.RplanData, ax=None, title=None, with_colors=True):
     """
+    Plot the graph representation for a floorplan
 
-    :param data:
-    :param ax:
-    :param title:
-    :param with_colors:
-    :return:
+    :param data: a data object from RPLAN dataset
+    :type data: data.RplanData
+    :param ax: optional axes to plot in
+    :type ax: matplotlib.axes._subplots.AxesSubplot
+    :param title: optional title to add to the plot
+    :type title: str
+    :param with_colors: optional, wether to colour nodes by ther class or not, defaults to True
+    :type with_colors: bool
+    :return: the plotted axes
+    :rtype: matplotlib.axes._subplots.AxesSubplot
     """
     if ax is None:
         ax = plt.subplot()
