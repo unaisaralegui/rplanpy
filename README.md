@@ -10,6 +10,15 @@ This package works with the RPLAN image dataset, which consists of more than 80k
 images of real residential buildings, and can be obtained from the following 
 [link](https://docs.google.com/forms/d/e/1FAIpQLSfwteilXzURRKDI5QopWCyOGkeb_CFFbRwtQ0SOPhEg0KGSfw/viewform)
 
+## Examples
+
+### Floorplan image to relation graph
+
+Check an example converting a floorplan to a relation graph with node and edge attibutes in
+[create_graph.py](create_graph.py). `True` in an edge means there is a door in the connection between two rooms.
+
+![Graph example image](example_graph.png)
+
 ## Citation
 
 If you use this work please cite the original paper which collected the data.
