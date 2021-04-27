@@ -1,14 +1,20 @@
 import imageio
 import numpy as np
 import networkx as nx
-from skimage import measure
-from scipy import stats
+from skimage import measure, feature, segmentation
+from scipy import stats, ndimage
 
 
 from . import utils
 
 
 class RplanData:
+    """
+    Set of utilities for RPLAN dataset images
+
+    :param image_path: Path to the image from the RPLAN dataset
+    :type image_path: str
+    """
 
     def __init__(self, image_path):
         self.image_path = image_path
@@ -19,6 +25,7 @@ class RplanData:
         self.inside = utils.get_channel(self.image, 3)
         self._rooms = None
         self._edges = None
+        self._interior_doors = None
 
     def get_front_door_mask(self):
         """
@@ -84,6 +91,28 @@ class RplanData:
         self._edges = np.array(edges, dtype=int)
         return self._edges
 
+    def get_interior_doors(self):
+        if self._interior_doors is not None:
+            return self._interior_doors
+        doors = []
+        category = 17  # InteriorDoor
+        mask = (self.category == category).astype(np.uint8)
+        distance = ndimage.morphology.distance_transform_cdt(mask)
+        local_maxi = (distance > 1).astype(np.uint8)
+        corner_measurement = feature.corner_harris(local_maxi)
+        local_maxi[corner_measurement > 0] = 0
+        markers = measure.label(local_maxi)
+
+        labels = segmentation.watershed(-distance, markers, mask=mask, connectivity=8)
+        regions = measure.regionprops(labels)
+
+        for region in regions:
+            y0, x0, y1, x1 = np.array(region.bbox)
+            doors.append([y0, x0, y1, x1, category])
+
+        self._interior_doors = np.array(doors, dtype=int)
+        return self._interior_doors
+
     def get_rooms_with_properties(self):
         """
         Get each room with their properties formatted in a dict
@@ -100,6 +129,15 @@ class RplanData:
         }
         return properties_per_room
 
+    def door_in_edge(self, edge):
+        doors = self.get_interior_doors()
+        room1 = self.get_rooms()[edge[0]]
+        room2 = self.get_rooms()[edge[1]]
+        for i in range(len(doors)):
+            if utils.door_room_relation(doors[i], room1) and utils.door_room_relation(doors[i], room2):
+                return True
+        return False
+
     def get_edges_with_properties(self):
         """
         Get edges between rooms with their properties formatted in a dict
@@ -108,16 +146,25 @@ class RplanData:
         :rtype: list
         """
         rooms = self.get_rooms()
-        properties_per_room = [
+        properties_per_edge = [
             (
                 rooms[edge[0]][-1], rooms[edge[1]][-1],
-                {'location': edge[2]}
+                {
+                    'location': edge[2],
+                    'door': self.door_in_edge(edge)
+                }
             )
             for edge in self.get_edges()
         ]
-        return properties_per_room
+        return properties_per_edge
 
     def get_graph(self):
+        """
+        Get the graph representation for the floorplan
+
+        :return: a networkx graph with the nodes, the edges and their properties
+        :rtype: networkx.classes.graph.Graph
+        """
         G = nx.Graph()
         # add nodes
         G.add_nodes_from([(room, props) for room, props in self.get_rooms_with_properties().items()])

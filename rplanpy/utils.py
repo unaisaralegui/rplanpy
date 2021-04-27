@@ -118,3 +118,41 @@ def point_box_relation(u, vbox):
     else:
         relation = None
     return relation
+
+
+def door_room_relation(door_box, room_box):
+    y0, x0, y1, x1 = room_box[:4]
+    yc, xc = (y1 + y0) / 2, (x0 + x1) / 2
+    y0b, x0b, y1b, x1b = door_box[:4]
+    y, x = (y1b + y0b) / 2, (x0b + x1b) / 2
+
+    if x == xc and y < yc:
+        return 7
+    elif x == xc and y > yc:
+        return 1
+    elif y == yc and x < xc:
+        return 10
+    elif y == yc and x > xc:
+        return 4
+    elif x0 < x < xc:
+        if y < yc:
+            return 8
+        else:
+            return 12
+    elif xc < x < x1:
+        if y < yc:
+            return 6
+        else:
+            return 2
+    elif y0 < y < yc:
+        if x < xc:
+            return 9
+        else:
+            return 5
+    elif yc < y < y1:
+        if x < xc:
+            return 11
+        else:
+            return 3
+    else:
+        return 0

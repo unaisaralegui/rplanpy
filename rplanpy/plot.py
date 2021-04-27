@@ -37,10 +37,12 @@ def plot_floorplan(data: data.RplanData, ax=None, title=None):
         ax = plt.subplot()
     ax.imshow(coloured_image)
     ax.set_title(title)
+    ax.axis("off")
     return ax
 
 
-def plot_floorplan_graph(data: data.RplanData, ax=None, title=None, with_colors=True):
+def plot_floorplan_graph(data: data.RplanData, ax=None, title=None,
+                         with_colors=True, edge_label=None):
     """
     Plot the graph representation for a floorplan
 
@@ -64,7 +66,8 @@ def plot_floorplan_graph(data: data.RplanData, ax=None, title=None, with_colors=
         nx.draw(G, pos, with_labels=True, ax=ax, node_color=colors)
     else:
         nx.draw(G, pos, with_labels=True, ax=ax, )
-    edge_labels = nx.get_edge_attributes(G, 'type')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, ax=ax)
+    if edge_label:
+        edge_labels = nx.get_edge_attributes(G, edge_label)
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, ax=ax)
     ax.set_title(title)
     return ax
