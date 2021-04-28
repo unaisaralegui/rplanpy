@@ -62,7 +62,14 @@ ROOM_COLOR = {
 }
 
 
-def get_channel(image, n):
+def get_image_channel(image, n):
+    """
+    Get channel n of an image
+
+    :param image: An image loaded with imageio
+    :param n: channel to get
+    :return: values in specified channel
+    """
     return image[..., n]
 
 
@@ -92,7 +99,7 @@ def point_box_relation(u, vbox):
      0   3   8
         ---
      2 | 4 | 7
-       ---
+        ---
      1   6   9
     """
     uy, ux = u

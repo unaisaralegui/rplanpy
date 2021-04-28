@@ -19,15 +19,15 @@ class RplanData:
     def __init__(self, image_path):
         self.image_path = image_path
         self.image = imageio.imread(image_path)
-        self.boundary = utils.get_channel(self.image, 0)
-        self.category = utils.get_channel(self.image, 1)
-        self.instance = utils.get_channel(self.image, 2)
-        self.inside = utils.get_channel(self.image, 3)
+        self.boundary = utils.get_image_channel(self.image, 0)
+        self.category = utils.get_image_channel(self.image, 1)
+        self.instance = utils.get_image_channel(self.image, 2)
+        self.inside = utils.get_image_channel(self.image, 3)
         self._rooms = None
         self._edges = None
         self._interior_doors = None
 
-    def get_front_door_mask(self):
+    def get_front_door_mask(self) -> np.array:
         """
         Get the mask for the front door
 
@@ -38,7 +38,7 @@ class RplanData:
         region = measure.regionprops(front_door_mask.astype(int))[0]
         return np.array(region.bbox, dtype=int)
 
-    def get_rooms(self):
+    def get_rooms(self) -> np.array:
         """
         Get the rooms in the floor plan
         :return:
@@ -65,7 +65,7 @@ class RplanData:
         self._rooms = np.array(rooms, dtype=int)
         return self._rooms
 
-    def get_edges(self, th=9):
+    def get_edges(self, th: int = 9) -> np.array:
         if self._edges is not None:
             return self._edges
         if self._rooms is None:
@@ -91,7 +91,7 @@ class RplanData:
         self._edges = np.array(edges, dtype=int)
         return self._edges
 
-    def get_interior_doors(self):
+    def get_interior_doors(self) -> np.array:
         if self._interior_doors is not None:
             return self._interior_doors
         doors = []
@@ -113,7 +113,7 @@ class RplanData:
         self._interior_doors = np.array(doors, dtype=int)
         return self._interior_doors
 
-    def get_rooms_with_properties(self):
+    def get_rooms_with_properties(self) -> dict:
         """
         Get each room with their properties formatted in a dict
 
@@ -129,7 +129,15 @@ class RplanData:
         }
         return properties_per_room
 
-    def door_in_edge(self, edge):
+    def door_in_edge(self, edge: list) -> bool:
+        """
+        Check if there is a door in an edge
+
+        :param edge: edge to check [room1, room2, relation]
+        :type edge: list
+        :return: door in an edge?
+        :rtype: bool
+        """
         doors = self.get_interior_doors()
         room1 = self.get_rooms()[edge[0]]
         room2 = self.get_rooms()[edge[1]]
@@ -138,7 +146,7 @@ class RplanData:
                 return True
         return False
 
-    def get_edges_with_properties(self):
+    def get_edges_with_properties(self) -> list:
         """
         Get edges between rooms with their properties formatted in a dict
 
@@ -158,7 +166,7 @@ class RplanData:
         ]
         return properties_per_edge
 
-    def get_graph(self):
+    def get_graph(self) -> nx.classes.graph.Graph:
         """
         Get the graph representation for the floorplan
 
