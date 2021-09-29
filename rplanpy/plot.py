@@ -52,7 +52,7 @@ def plot_floorplan_graph(data: data.RplanData, ax=None, title=None,
     :type ax: matplotlib.axes._subplots.AxesSubplot
     :param title: optional title to add to the plot
     :type title: str
-    :param with_colors: optional, wether to colour nodes by ther class or not, defaults to True
+    :param with_colors: optional, whether to colour nodes by their class or not, defaults to True
     :type with_colors: bool
     :return: the plotted axes
     :rtype: matplotlib.axes._subplots.AxesSubplot

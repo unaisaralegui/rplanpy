@@ -25,7 +25,7 @@ setuptools.setup(
         'numpy',
         'matplotlib',
         'networkx',
-        'skimage',
+        'scikit-image',
         'scipy'
     ],
     classifiers=[
