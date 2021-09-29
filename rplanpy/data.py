@@ -123,7 +123,8 @@ class RplanData:
         properties_per_room = {
             room[-1]: {
                 'category': room[-2],
-                'bounding_box': room[0:4]
+                'bounding_box': room[0:4],
+                'area': (room[2]-room[0]) * (room[3]-room[1])
             }
             for room in self.get_rooms()
         }
